@@ -2,55 +2,26 @@ package main
 
 import (
 	"log"
-	"math/rand"
-	"net/http"
-	"time"
+
+	"jugg-tool-box-service/common"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	r := gin.Default()
-	r.POST("/api/auth/register", func(c *gin.Context) {
-		// 获取参数
-		name := c.PostForm("name")
-		telephone := c.PostForm("telephone")
-		password := c.PostForm("password")
+	db := common.GetDB()
 
-		// 数据验证
-		if len(telephone) != 11 {
-			c.JSON(http.StatusUnprocessableEntity, gin.H{"code": 422, "msg": "手机号必须为11位"})
-			return
-		}
-		if len(password) < 6 {
-			c.JSON(http.StatusUnprocessableEntity, gin.H{"code": 422, "msg": "密码不能少于6位"})
-			return
-		}
-		if len(name) == 0 {
-			name = RandomString(10)
-		}
-
-		log.Println(name, telephone, password)
-
-		// 判断手机号是否存在
-
-		// 创建用户
-
-		// 返回结果
-		c.JSON(200, gin.H{
-			"message": "注册成功",
-		})
-	})
-
-	panic(r.Run()) // listen and serve on 0.0.0.0:8080
-}
-
-func RandomString(length int) string {
-	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	seededRand := rand.New(rand.NewSource(time.Now().UnixNano()))
-	b := make([]byte, length)
-	for i := range b {
-		b[i] = charset[seededRand.Intn(len(charset))]
+	// 获取底层的 *sql.DB 对象
+	sqlDB, err := db.DB()
+	if err != nil {
+		log.Fatal("failed to get *sql.DB: ", err)
 	}
-	return string(b)
+
+	// 关闭 Mysql 数据库链接
+	defer sqlDB.Close()
+
+	// 初始化路由
+	r := CollectRoute(gin.Default())
+
+	panic(r.Run())
 }
