@@ -11,7 +11,7 @@ import (
 )
 
 func Register(c *gin.Context) {
-	DB := common.GetDB()
+	db := common.GetDB()
 
 	// 获取参数
 	name := c.PostForm("name")
@@ -32,13 +32,13 @@ func Register(c *gin.Context) {
 	}
 
 	// 判断手机号是否存在
-	if isTelephoneExist(DB, telephone) {
+	if isTelephoneExist(db, telephone) {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{"code": 422, "msg": "用户已存在"})
 		return
 	}
 
 	// 创建用户
-	DB.Create(&model.User{
+	db.Create(&model.User{
 		Name:      name,
 		Telephone: telephone,
 		Password:  password,
@@ -48,6 +48,20 @@ func Register(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"message": "注册成功",
 	})
+}
+
+func Login(c *gin.Context) {
+	// 获取用户
+	telephone := c.PostForm("telephone")
+	password := c.PostForm("password")
+
+	// 数据验证
+
+	// 判断手机号是否存在
+
+	// 判断密码是否正确
+
+	// 发放token
 }
 
 func isTelephoneExist(db *gorm.DB, telephone string) bool {

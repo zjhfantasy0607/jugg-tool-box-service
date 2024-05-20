@@ -9,7 +9,8 @@ import (
 )
 
 func main() {
-	db := common.GetDB()
+	/***** 初始化数据库链接 *****/
+	db := common.InitDB()
 
 	// 获取底层的 *sql.DB 对象
 	sqlDB, err := db.DB()
@@ -17,11 +18,10 @@ func main() {
 		log.Fatal("failed to get *sql.DB: ", err)
 	}
 
-	// 关闭 Mysql 数据库链接
+	// 延迟关闭 Mysql 数据库链接
 	defer sqlDB.Close()
 
-	// 初始化路由
+	/***** 初始化路由 *****/
 	r := CollectRoute(gin.Default())
-
 	panic(r.Run())
 }

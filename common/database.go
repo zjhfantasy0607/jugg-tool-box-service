@@ -10,7 +10,7 @@ import (
 
 var db *gorm.DB
 
-func init() {
+func InitDB() *gorm.DB {
 	host := "localhost"
 	port := "3306"
 	database := "jugg-tool-box"
@@ -26,7 +26,8 @@ func init() {
 		database,
 		charset)
 
-	db, err := gorm.Open(mysql.Open(args), &gorm.Config{})
+	var err error
+	db, err = gorm.Open(mysql.Open(args), &gorm.Config{})
 
 	if err != nil {
 		panic("failed to connect database, err: " + err.Error())
@@ -34,6 +35,8 @@ func init() {
 
 	// 建表
 	db.AutoMigrate(&model.User{})
+
+	return db
 }
 
 func GetDB() *gorm.DB {
