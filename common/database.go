@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"jugg-tool-box-service/model"
 
+	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -11,12 +12,12 @@ import (
 var db *gorm.DB
 
 func InitDB() *gorm.DB {
-	host := "localhost"
-	port := "3306"
-	database := "jugg-tool-box"
-	username := "root"
-	password := "root"
-	charset := "utf8mb4"
+	host := viper.GetString("database.host")
+	port := viper.GetString("database.port")
+	database := viper.GetString("database.database")
+	username := viper.GetString("database.username")
+	password := viper.GetString("database.password")
+	charset := viper.GetString("database.charset")
 
 	args := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=True",
 		username,

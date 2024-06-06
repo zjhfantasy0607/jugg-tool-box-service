@@ -8,13 +8,14 @@ import (
 )
 
 type User struct {
-	ID          uint         `gorm:"primaryKey"`
-	Name        string       `gorm:"type:varchar(255); charset:utf8mb4; not null;"`
-	Telephone   string       `gorm:"type:varchar(255); charset:utf8mb4; not null;"`
-	Password    string       `gorm:"type:varchar(255); charset:utf8mb4; not null;"`
-	ActivatedAt sql.NullTime // Uses sql.NullTime for nullable time fields
-	CreatedAt   time.Time    // 创建时间（由GORM自动管理）
-	UpdatedAt   time.Time    // 最后一次更新时间（由GORM自动管理）
+	ID          uint           `gorm:"primaryKey"`
+	Name        string         `gorm:"type:varchar(255); charset:utf8mb4; not null;"`
+	Telephone   string         `gorm:"type:varchar(255); charset:utf8mb4; not null;"`
+	Password    string         `gorm:"type:varchar(255); charset:utf8mb4; not null;"`
+	ActivatedAt sql.NullTime   // Uses sql.NullTime for nullable time fields
+	CreatedAt   time.Time      // 创建时间（由GORM自动管理）
+	UpdatedAt   time.Time      // 最后一次更新时间（由GORM自动管理）
+	DeletedAt   gorm.DeletedAt `gorm:"index"`
 }
 
 func (user *User) BeforeCreate(tx *gorm.DB) (err error) {
