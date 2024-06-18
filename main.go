@@ -40,8 +40,20 @@ func main() {
 }
 
 func InitConfig() {
+	// 获取环境变量的值
+	env := os.Getenv("JUGG_TOOL_BOX_SERVICE_ENV")
+
+	// 根据当前环境读取不同的配置文件
+	fileName := "application"
+	if env == "product" {
+		fileName = fileName + ".product"
+
+		// 设置 gin 为生产模式
+		gin.SetMode(gin.ReleaseMode)
+	}
+
 	workDir, _ := os.Getwd()
-	viper.SetConfigName("application")
+	viper.SetConfigName(fileName)
 	viper.SetConfigType("yml")
 	viper.AddConfigPath(workDir + "/config")
 	err := viper.ReadInConfig()

@@ -9,9 +9,12 @@ import (
 
 type User struct {
 	ID          uint           `gorm:"primaryKey"`
+	UID         string         `gorm:"type:varchar(255);uniqueIndex;default:'';not null;"` // 添加 UID 字段，并设置唯一索引和默认值
 	Name        string         `gorm:"type:varchar(255); charset:utf8mb4; not null;"`
 	Telephone   string         `gorm:"type:varchar(255); charset:utf8mb4; not null;"`
+	Email       string         `gorm:"type:varchar(500); charset:utf8mb4; not null;"`
 	Password    string         `gorm:"type:varchar(255); charset:utf8mb4; not null;"`
+	Points      int            `gorm:"default:0"` // 默认给0的积分字段
 	ActivatedAt sql.NullTime   // Uses sql.NullTime for nullable time fields
 	CreatedAt   time.Time      // 创建时间（由GORM自动管理）
 	UpdatedAt   time.Time      // 最后一次更新时间（由GORM自动管理）

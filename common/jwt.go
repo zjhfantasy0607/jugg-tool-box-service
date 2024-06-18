@@ -10,14 +10,14 @@ import (
 var jwtKey = []byte("sz-drvtry_crect")
 
 type Claims struct {
-	UserId uint
+	UID string
 	jwt.StandardClaims
 }
 
 func ReleaseToken(user model.User) (string, error) {
 	expirationTime := time.Now().Add(7 * 24 * time.Hour)
 	claims := &Claims{
-		UserId: user.ID,
+		UID: user.UID,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 			IssuedAt:  time.Now().Unix(),

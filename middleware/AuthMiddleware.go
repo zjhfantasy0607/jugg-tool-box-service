@@ -30,11 +30,10 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		// 验证通过后获取 claim 中的 userId
-		userId := claims.UserId
+		uid := claims.UID
 		DB := common.GetDB()
 		var user model.User
-		DB.First(&user, userId)
-
+		DB.Where("uid = ?", uid).First(&user)
 		// 用户不存在
 		if user.ID == 0 {
 			c.JSON(http.StatusUnauthorized, gin.H{"code": 4012, "msg": "权限不足"})

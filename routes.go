@@ -10,7 +10,7 @@ import (
 func CollectRoute(r *gin.Engine) *gin.Engine {
 	r.POST("/api/auth/regist", controller.Regist)
 	r.POST("/api/auth/signIn", controller.SignIn)
-	r.GET("/api/auth/info", middleware.AuthMiddleware(), controller.Info)
+	r.POST("/api/auth/info", middleware.AuthMiddleware(), controller.Info)
 
 	return r
 }

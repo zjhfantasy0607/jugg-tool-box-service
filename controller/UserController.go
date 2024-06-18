@@ -10,6 +10,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -21,6 +22,7 @@ func Regist(c *gin.Context) {
 	name := c.PostForm("name")
 	email := c.PostForm("email")
 	password := c.PostForm("password")
+	confirmPassword := c.PostForm("confirm_password")
 
 	/***** 数据验证 *****/
 	if !util.IsEmail(email) {
@@ -35,9 +37,15 @@ func Regist(c *gin.Context) {
 		name = util.RandomString(10)
 	}
 
-	/***** 判断手机号是否存在 *****/
-	if isTelephoneExist(DB, email) {
+	/***** 判断邮箱是否已存在 *****/
+	if isEmailExist(DB, email) {
 		response.Response(c, http.StatusUnprocessableEntity, 422, nil, "用户已存在")
+		return
+	}
+
+	/***** 判断两次密码是否一样 *****/
+	if password != confirmPassword {
+		response.Response(c, http.StatusUnprocessableEntity, 422, nil, "两次输入的密码不相等")
 		return
 	}
 
@@ -49,14 +57,23 @@ func Regist(c *gin.Context) {
 		return
 	}
 
-	DB.Create(&model.User{
-		Name:      name,
-		Telephone: email,
-		Password:  string(hashedPassword),
-	})
+	user := model.User{
+		Name:     name,
+		UID:      uuid.New().String(),
+		Email:    email,
+		Password: string(hashedPassword),
+	}
+	DB.Create(&user)
 
-	// 返回结果
-	response.Success(c, nil, "注册成功")
+	// 注册成功 发放 token
+	token, err := common.ReleaseToken(user)
+	if err != nil {
+		response.Response(c, http.StatusInternalServerError, 500, nil, "系统异常")
+		log.Printf("token generate error : %v", err)
+		return
+	}
+
+	response.Success(c, gin.H{"token": token}, "注册成功, 已自动登录")
 }
 
 func SignIn(c *gin.Context) {
@@ -98,7 +115,7 @@ func SignIn(c *gin.Context) {
 		return
 	}
 
-	response.Success(c, gin.H{"token": token}, "登录成功")
+	response.Success(c, gin.H{"token": token}, "欢迎登录")
 }
 
 func Info(c *gin.Context) {
@@ -106,9 +123,9 @@ func Info(c *gin.Context) {
 	response.Success(c, gin.H{"user": dto.ToUserDto(user.(model.User))}, "")
 }
 
-func isTelephoneExist(db *gorm.DB, telephone string) bool {
+func isEmailExist(db *gorm.DB, email string) bool {
 	var user model.User
-	db.Where("telephone = ?", telephone).First(&user)
+	db.Where("email = ?", email).First(&user)
 
 	return user.ID != 0
 }

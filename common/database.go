@@ -19,13 +19,15 @@ func InitDB() *gorm.DB {
 	password := viper.GetString("database.password")
 	charset := viper.GetString("database.charset")
 
-	args := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=True",
+	args := fmt.Sprintf(
+		"%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=True",
 		username,
 		password,
 		host,
 		port,
 		database,
-		charset)
+		charset,
+	)
 
 	var err error
 	db, err = gorm.Open(mysql.Open(args), &gorm.Config{})
@@ -35,7 +37,10 @@ func InitDB() *gorm.DB {
 	}
 
 	// 建表
-	db.AutoMigrate(&model.User{})
+	db.AutoMigrate(
+		&model.User{},
+		&model.UserCapcha{},
+	)
 
 	return db
 }
