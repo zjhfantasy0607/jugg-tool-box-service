@@ -34,6 +34,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		DB := common.GetDB()
 		var user model.User
 		DB.Where("uid = ?", uid).First(&user)
+
 		// 用户不存在
 		if user.ID == 0 {
 			c.JSON(http.StatusUnauthorized, gin.H{"code": 4012, "msg": "权限不足"})

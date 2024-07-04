@@ -3,9 +3,21 @@ server:
 
 database:
   driverName: mysql
-  host: 172.25.96.1
+  host: 127.0.0.1
   port: 3306
   database: jugg-tool-box
   username: root
   password: jugg-tool-root
   charset: utf8mb4
+
+smtp:
+  host: email-smtp.ap-northeast-3.amazonaws.com
+  port: 2587
+  username: AKIAZI2LBUQBBZG2WPP3
+  password: BAFDcTSbAUCGY8lV+vpKMyYyPsf4CLfEpd2sfVuu3Ri2
+  fromName: JUGG-TOOL-BOX
+  fromEmail: zjhfantasy0607@gmail.com
+
+captcha:
+  offset: 10 # 允许的拼图偏移量
+  lifeTime: 2 # 单位分

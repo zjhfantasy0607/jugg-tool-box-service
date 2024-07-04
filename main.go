@@ -11,10 +11,10 @@ import (
 )
 
 func main() {
-	/***** 初始化配置信息 *****/
+	// 初始化配置信息
 	InitConfig()
 
-	/***** 初始化数据库链接 *****/
+	// 初始化数据库链接
 	db := common.InitDB()
 
 	// 获取底层的 *sql.DB 对象
@@ -26,10 +26,10 @@ func main() {
 	// 延迟关闭 Mysql 数据库链接
 	defer sqlDB.Close()
 
-	/***** 初始化路由 *****/
+	// 初始化路由
 	r := CollectRoute(gin.Default())
 
-	/***** 启动http服务 *****/
+	// 启动http服务
 	port := viper.GetString("server.port")
 	if port != "" {
 		panic(r.Run(":" + port))
@@ -57,6 +57,7 @@ func InitConfig() {
 	viper.SetConfigType("yml")
 	viper.AddConfigPath(workDir + "/config")
 	err := viper.ReadInConfig()
+
 	if err != nil {
 		panic("config file load fail")
 	}

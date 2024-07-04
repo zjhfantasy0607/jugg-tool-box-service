@@ -39,7 +39,7 @@ func InitDB() *gorm.DB {
 	// 建表
 	db.AutoMigrate(
 		&model.User{},
-		&model.UserCapcha{},
+		&model.UserCaptcha{},
 	)
 
 	return db
