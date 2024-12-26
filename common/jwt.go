@@ -16,7 +16,7 @@ type Claims struct {
 }
 
 type CaptchaClaims struct {
-	Email string
+	BrowserId string
 	jwt.StandardClaims
 }
 
@@ -42,16 +42,16 @@ func ReleaseToken(user model.User) (string, error) {
 	return tokenString, nil
 }
 
-func ReleaseCaptchaToken(userCaptcha model.UserCaptcha) (string, error) {
-	lifeTime := viper.GetInt("captcha.lifeTime")
+func ReleaseCaptchaToken(captcha model.Captcha) (string, error) {
+	lifeTime := viper.GetInt("captcha.puzzleLifeTime")
 	expirationTime := time.Now().Add(time.Duration(lifeTime) * time.Minute)
 	claims := &CaptchaClaims{
-		Email: userCaptcha.Email,
+		BrowserId: captcha.BrowserId,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 			IssuedAt:  time.Now().Unix(),
 			Issuer:    "jugg-tool-box.com",
-			Subject:   "captCha token",
+			Subject:   "captcha token",
 		},
 	}
 

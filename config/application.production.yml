@@ -5,21 +5,21 @@ server:
 
 database:
   driverName: mysql
-  host: mysql
+  host: ec2-15-152-41-240.ap-northeast-3.compute.amazonaws.com
   port: 3306
   database: jugg-tool-box
-  username: root
-  password: jugg-tool-root
+  username: admin
+  password: StrongPassword123!
   charset: utf8mb4
   timezone: Asia/Shanghai
 
 redis:
-  host: redis
+  host: ec2-15-152-33-37.ap-northeast-3.compute.amazonaws.com
   port: 6379
   password: rootroot123
 
 nsqd:
-  host: nsqd
+  host: ec2-15-152-33-37.ap-northeast-3.compute.amazonaws.com
   port: 4150
   
 smtp:

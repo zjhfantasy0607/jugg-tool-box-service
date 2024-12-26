@@ -1,0 +1,5 @@
+.next
+.dockerignore
+.vscode
+Dockerfile
+node_modules

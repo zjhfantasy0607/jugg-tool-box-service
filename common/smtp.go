@@ -1,31 +1,21 @@
 package common
 
 import (
-	"errors"
+	"fmt"
+	"jugg-tool-box-service/model"
 	"jugg-tool-box-service/util"
-	"log"
 
+	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"gopkg.in/gomail.v2"
 )
 
-func SendEmail(targetEmail string, subject string, body string) error {
-	// 配置SMTP服务器信息
+func SendEmail(targetEmail string, subject string, body string, remark string) error {
+	// 配置smtp服务器信息
 	smtpHost := viper.GetString("smtp.host")
 	smtpPort := viper.GetInt("smtp.port")
 	smtpUsername := viper.GetString("smtp.username")
 	smtpPassword := viper.GetString("smtp.password")
-
-	log.Println(viper.GetString("smtp.host"))
-	log.Println(viper.GetString("smtp.port"))
-	log.Println(viper.GetString("smtp.username"))
-	log.Println(viper.GetString("smtp.password"))
-	log.Println(viper.GetString("smtp.from"))
-
-	// 检查邮箱地址是否正确
-	if !util.IsEmail(targetEmail) {
-		return errors.New("invalid email address")
-	}
 
 	// 配置邮件信息
 	fromName := viper.GetString("smtp.fromName")
@@ -38,15 +28,28 @@ func SendEmail(targetEmail string, subject string, body string) error {
 	m.SetHeader("Subject", subject)
 	m.SetBody("text/plain", body)
 
-	// 配置SMTP拨号器
+	// 配置smtp拨号器
 	d := gomail.NewDialer(smtpHost, smtpPort, smtpUsername, smtpPassword)
+	if smtpPort == 465 {
+		d.SSL = true
+	}
 
 	// 发送邮件
 	if err := d.DialAndSend(m); err != nil {
-		log.Fatalf("发送邮件失败 %s : %v", targetEmail, err)
+		util.LogErr(errors.WithStack(fmt.Errorf("发送邮件失败 %s : %w", targetEmail, err)), "./log/email.log")
+		return err
 	}
 
-	log.Println("邮件发送成功!")
+	DB := GetDB()
+
+	// 将成功的邮件记录存进数据库
+	userCaptcha := model.EmailRecord{
+		Email:   targetEmail,
+		Subject: subject,
+		Body:    body,
+		Code:    remark,
+	}
+	DB.Save(&userCaptcha)
 
 	return nil
 }
