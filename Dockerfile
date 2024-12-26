@@ -37,9 +37,9 @@ RUN chmod -R 777 /app
 COPY --from=builder /app/main .
 
 # 设置环境变量
-ENV JUGG_TOOL_BOX_SERVICE_ENV=production
-ENV MY_DOMAIN=ec2-15-168-7-66.ap-northeast-3.compute.amazonaws.com
-ENV TZ=Asia/Shanghai
+# ENV JUGG_TOOL_BOX_SERVICE_ENV=production
+# ENV MY_DOMAIN=ec2-15-168-7-66.ap-northeast-3.compute.amazonaws.com
+# ENV TZ=Asia/Shanghai
 
 # 暴露应用端口（根据你的应用需求修改）
 EXPOSE 8080
